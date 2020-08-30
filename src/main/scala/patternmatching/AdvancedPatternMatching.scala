@@ -44,4 +44,44 @@ object AdvancedPatternMatching extends App {
   case _ => "No property"
  }
  println(mathProperty)
+
+
+ /**
+  * 3. Infix pattern
+  */
+
+ case class Or[A, B](a : A, b :B)
+ val either = Or(5, "five")
+ val humanDescription = either match {
+  case number Or text => s"$number is written as $text" // alternative ways for : Or(number, text)
+ }
+ println(humanDescription)
+
+
+ /**
+  * 4. unapplySeq method
+  */
+  class SundayList[+A]{
+   def head : A = ??? // implemented as nothing
+   def tail : SundayList[A] = ??? // implemented as nothing
+ }
+
+ case object Empty extends SundayList[Nothing]
+ case class Cons[+A](override val head : A, override  val tail : SundayList[A]) extends SundayList[A]
+
+ object SundayList{
+  def unapplySeq[A](list : SundayList[A]) : Option[Seq[A]] = {
+     if (list == Empty) {
+       Some(Seq.empty)
+     } else {
+       unapplySeq(list.tail).map(list.head +: _)
+     }
+  }
+ }
+
+ val sundayList = Cons(1, Cons(2, Cons(3, Cons(4, Empty))))
+
+ sundayList match {
+  case SundayList(1,2, _*) => println("start by 1, 2")
+ }
 }
