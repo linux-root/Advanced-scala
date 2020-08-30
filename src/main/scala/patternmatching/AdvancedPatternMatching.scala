@@ -84,4 +84,29 @@ object AdvancedPatternMatching extends App {
  sundayList match {
   case SundayList(1,2, _*) => println("start by 1, 2")
  }
+
+ /**
+  * 5. customized wrapper
+  * normally, just use Option
+  */
+ class Student(val name: String,val age: Int)
+ object Student{
+  def unapply(p: Student): Wrapper[String] = new Wrapper[String] {
+   override def isEmpty: Boolean = false
+   override def get: String = p.name
+  }
+ }
+ abstract class Wrapper[A]{
+  def isEmpty : Boolean // required method
+  def get : A // required method
+ }
+
+ val student = new Student("Alice", 23)
+
+ student match {
+  case Student(name) => println(s"Hi, I am $name")
+ }
+
+
+
 }
