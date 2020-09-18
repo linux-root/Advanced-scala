@@ -37,6 +37,6 @@ val printNumberFormat2 = printNumber("%8.4f")
   println("---------")
   byValue(method1)
   println("---------")
-  byFunction(method1) // illegal call. Compiler cannot convert method1 to function
+//  byFunction(method1) // illegal call. Compiler cannot convert method1 to function
   byFunction(method2) // legal call. Compiler can convert method2 to  function automatically
 }
