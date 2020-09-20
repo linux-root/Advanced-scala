@@ -8,7 +8,7 @@ object LazyValuation extends App{
 //  mondayStream.filter(_ < 10).take(11).foreach(println)
 
 //  val f = SundayStream.fibonacci.take(100).foreach(println)
-    SundayStream.prime.take(10000).foreach(println)
+    SundayStream.infinitePrime.take(100).foreach(println)
 }
 
 abstract class SundayStream[+A] {
@@ -127,7 +127,7 @@ object SundayStream {
     new Cons[Long](first, fibonacci(second, next))
   }
 
-  def prime = {
+  def infinitePrime = {
     val naturalNumbers = from[BigInt](2)(n => n + 1)
     eratosthenes(naturalNumbers)
   }
