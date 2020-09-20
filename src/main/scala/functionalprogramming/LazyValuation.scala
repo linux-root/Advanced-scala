@@ -5,7 +5,10 @@ object LazyValuation extends App{
   val mondayStream = SundayStream.from(0)((n : Int) => n + 1)
 
  // val conCat = mondayStream.take(10) ++ mondayStream.take(10) // may cause StackOverFlowEx if ++ is not implement properly
-  mondayStream.filter(_ < 10).take(11).foreach(println)
+//  mondayStream.filter(_ < 10).take(11).foreach(println)
+
+//  val f = SundayStream.fibonacci.take(100).foreach(println)
+    SundayStream.prime.take(10000).foreach(println)
 }
 
 abstract class SundayStream[+A] {
@@ -110,5 +113,30 @@ object SundayStream {
   def from[A](start : A)(generator: A => A) : SundayStream[A] = {
      lazy val next = generator(start)
      new Cons[A](start, SundayStream.from(next)(generator))
+  }
+
+  def fibonacci : SundayStream[Long] = fibonacci(0,1)
+  /***
+   *
+   * @param first
+   * @param second
+   * @return fibonacci stream starting by two first elements : first and seconds
+   */
+  def fibonacci(first: Long, second: Long) : SundayStream[Long] = {
+    val next = first + second
+    new Cons[Long](first, fibonacci(second, next))
+  }
+
+  def prime = {
+    val naturalNumbers = from[BigInt](2)(n => n + 1)
+    eratosthenes(naturalNumbers)
+  }
+
+  def eratosthenes(numbers : SundayStream[BigInt]) : SundayStream[BigInt] = {
+    if (numbers.isEmpty){
+      numbers
+    } else {
+      new Cons[BigInt](numbers.head, eratosthenes(numbers.tail.filter(_ % numbers.head != 0)))
+    }
   }
 }
