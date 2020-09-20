@@ -2,10 +2,10 @@ package functionalprogramming
 
 object LazyValuation extends App{
 
-  val mondayStream = SundayStream.from(1)((n : Int) => n + 1)
+  val mondayStream = SundayStream.from(0)((n : Int) => n + 1)
 
-  val conCat = mondayStream.take(10) ++ mondayStream.take(10)
-  mondayStream.take(10).flatMap(e => new Cons[Int](e*2, new Cons(e*3, EmptyStream))).foreach(println)
+ // val conCat = mondayStream.take(10) ++ mondayStream.take(10) // may cause StackOverFlowEx if ++ is not implement properly
+  mondayStream.filter(_ < 10).take(11).foreach(println)
 }
 
 abstract class SundayStream[+A] {
@@ -62,7 +62,7 @@ class Cons[A](override val head : A, lazyTail : => SundayStream[A]) extends Sund
         as Scala Expression Evaluation. In other words, anotherStream will be reduced(called) before input to ++ operator
      */
 //    (this.head #:: this.tail) ++ anotherStream // won't work
-    this.head #:: this.tail.++(anotherStream) // works
+//    this.head #:: this.tail.++(anotherStream) // works
     this.head #:: (this.tail ++ anotherStream) // works
   }
 
@@ -78,16 +78,16 @@ class Cons[A](override val head : A, lazyTail : => SundayStream[A]) extends Sund
   override def flatMap[B](f: A => SundayStream[B]): SundayStream[B] = f(this.head) ++ this.tail.flatMap(f)
 
   override def take(n: Int): SundayStream[A] = {
-    if (n == 0) {
-      EmptyStream
-    } else {
-      this.head #:: this.tail.take(n - 1)
+    if (n == 1) {
+      new Cons(this.head, EmptyStream)
+    }else {
+      new Cons(this.head, this.tail.take(n - 1))
     }
   }
 
   override def takeAsList(n: Int): List[A] = {
-    if (n == 0) {
-      Nil
+    if (n == 1) {
+      this.head :: Nil
     } else {
       this.head :: this.tail.takeAsList(n - 1)
     }
@@ -95,7 +95,10 @@ class Cons[A](override val head : A, lazyTail : => SundayStream[A]) extends Sund
 
   override def filter(f: A => Boolean): SundayStream[A] = {
     if (f(this.head)) {
-      this.head #:: this.tail.filter(f)
+//      this.head #:: this.tail.filter(f) // this will cause StackOverFlowException because #:: is being used as Operator, not function
+      // when Using #:: as operator, Scala Expression Evaluation will be applied. It means this.tail.filter(f) is reduced (called) before
+      // put as parameter of to #:: method
+      new Cons(this.head, this.tail.filter(f))
     } else {
       this.tail.filter(f)
     }
