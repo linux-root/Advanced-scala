@@ -24,11 +24,13 @@ val printNumberFormat2 = printNumber("%8.4f")
   }
 
   def method1: Int = {
+    // this method cannot be passed as a function value because its type is : Int, not () => Int
     println("call method1")
     1 + 1
   }
 
   def method2(): Int = {
+    // compare to method 1, method2 type is () => Int so that can be passed as function
     println("call method2")
     1 + 1
   }
