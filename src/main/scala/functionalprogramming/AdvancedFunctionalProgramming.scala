@@ -5,7 +5,11 @@ object AdvancedFunctionalProgramming extends App {
     case 1 => "First"
     case 2 => "Second"
   }
-
+  val a =  (x: Int) => x match {
+    case 1 => "First"
+    case 2 => "Second"
+  }
+  println(pf1(6))
   val tp = pf1.lift // make pf1 a total function
 
   println(tp(2))
@@ -18,5 +22,5 @@ object AdvancedFunctionalProgramming extends App {
     case "Sorry" => "It's ok"
     case _ => "Glad to hear that"
   }
-  scala.io.Source.stdin.getLines().map(chatBot).foreach(println)
+//  scala.io.Source.stdin.getLines().map(chatBot).foreach(println)
 }
